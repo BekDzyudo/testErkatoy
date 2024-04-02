@@ -1,10 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AliceCarousel from "react-alice-carousel";
 import "./style.css";
 import "react-alice-carousel/lib/alice-carousel.css";
-import video1 from "./assets/video_1.mp4";
-import video2 from "./assets/video_2.mp4";
-import video3 from "./assets/video_3.mp4";
 
 function Carousel() {
   const [mainIndex, setMainIndex] = useState(0);
@@ -20,28 +17,43 @@ function Carousel() {
   //     setMainIndex(mainIndex - 1);
   //   }
   // };
-  const items = [
-    <div className="item">
-      <video width="100%" controls className="media" muted={mainIndex !== 0}>
-        <source src={video1} />
-      </video>
-    </div>,
-    <div className="item">
-      <video width="100%" controls className="media" muted={mainIndex !== 0}>
-        <source src={video2} />
-      </video>
-    </div>,
-    <div className="item">
-      <video width="100%" controls className="media" muted={mainIndex !== 0}>
-        <source src={video3} />
-      </video>
-    </div>,
-  ];
+
+  const items = [];
+
+  const [arr, setArr] = useState([]);
+  arr.forEach((item, index) => {
+    items.push(
+      <div className="item">
+        <video
+          width="100%"
+          controls
+          className="media"
+          muted={mainIndex !== index}
+        >
+          <source src={item.file} />
+        </video>
+      </div>
+    );
+  });
 
   const handleSlideChanged = (e) => {
-    console.log(e);
     setMainIndex(e.item);
   };
+  // ==================
+
+  useEffect(() => {
+    fetch("http://192.168.101.222:8000/videos", {
+      method: "GET",
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        setArr(data);
+      });
+  }, []);
+  // =================
+
   return (
     <div className="carouselContainer">
       <div className="carousel">
